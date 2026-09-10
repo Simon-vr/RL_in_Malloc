@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Bounded smoke run (~5-10 min CPU). Safe for CI / quick verification.
+# Bounded smoke run (~2 s CPU on the reference machine). Safe for CI / quick
+# verification; this is a smoke test, not a trained policy.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 

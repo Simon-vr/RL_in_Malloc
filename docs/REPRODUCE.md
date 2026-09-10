@@ -24,7 +24,7 @@ cd /home/yangsch/RLmalloc
 micromamba run -n test-py312 python -m pytest -q tests
 ```
 
-Measured: `21 passed in 0.89s` (pytest 9.1.1).
+Measured: `21 passed in ~1s` (pytest 9.1.1).
 
 ## 2. Bounded smoke training (quick profile)
 
@@ -36,7 +36,7 @@ micromamba run -n test-py312 python -m rlmalloc.train \
   --log results/metrics/train_log_quick.csv
 ```
 
-Measured on CPU: **1.9 s** (300 episodes, 439 env steps). Episodes are short
+Measured on CPU: **~2 s** (300 episodes, 439 env steps). Episodes are short
 early on because invalid actions terminate the episode while `epsilon` is
 high (see `docs/DEVIATIONS.md` §5).
 
@@ -86,7 +86,7 @@ micromamba run -n test-py312 python -m rlmalloc.evaluate \
 ```
 
 **Measured reference run:** the full 1000-round x 4-distribution x 4-policy
-evaluation took **23.6 s** on CPU.
+evaluation takes **~22 s** on CPU (run-to-run variation of a few seconds).
 
 ## 5. Outputs
 

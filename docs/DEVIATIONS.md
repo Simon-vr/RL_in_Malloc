@@ -19,7 +19,7 @@ The paper is internally inconsistent here: while Eq.(1)/Section II.A define
 the raw sum, the experimental numbers it reports (e.g. DQN 0.8165,
 First-Fit 0.7942, Best-Fit 0.7548) are only consistent with `1 -` raw sum.
 Our full run reproduces that ordering and magnitude under the complement
-convention (DQN 0.8209 > First-Fit 0.8079 > Best-Fit 0.7689), while the raw
+convention (DQN 0.8202 > First-Fit 0.8079 > Best-Fit 0.7689), while the raw
 sum is correspondingly small (~0.18). Both columns are emitted; use
 `hhi_complement` to compare against the paper's printed tables.
 

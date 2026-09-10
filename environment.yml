@@ -1,4 +1,5 @@
-name: rlmalloc
+# Spec for the reference env `test-py312` used by every README command.
+name: test-py312
 channels:
   - conda-forge
 dependencies:
