@@ -1,4 +1,4 @@
-numpy
-torch
-matplotlib
-tqdm
+numpy==2.5.2
+torch==2.14.0
+matplotlib==3.11.1
+tqdm==4.70.0

@@ -1,0 +1,27 @@
+FIGURE 1 - SYSTEM ARCHITECTURE (paper Fig. 1)
+
+  +----------------------------+        action index i in {0..4}
+  |         DQN Agent          |<--------------------------------+
+  |  11 -> 128 -> 128 -> 5     |                                 |
+  +-------------+--------------+                                 |
+                | Q-values                                        |
+                v                                                 |
+  +----------------------------+    reward R = sum((l_i/S)^2)     |
+  |        MemoryEnv           |---------------------------------+
+  |  - free block list F       |        state [size/M, addr/M]*k |
+  |  - allocated dict (ordinal)|              + [request/M]       |
+  +-------------+--------------+
+                | allocate / free
+                v
+  +----------------------------+
+  |   Memory space (M=4096)    |
+  +----------------------------+
+
+FIGURE 2 - STATE VECTOR (paper Fig. 2)
+
+  index:  0      1      2      3      ...    8      9      10
+        [ sz0/M, a0/M, sz1/M, a1/M, ..., sz4/M, a4/M, req/M ]
+          \_____ candidate 0 _____/      \__ candidate 4 __/   \_ request _/
+
+  k = 5 candidates, selected by: sort free blocks by start address ascending,
+  keep the first k whose size >= request.  Empty slots are zero-padded.

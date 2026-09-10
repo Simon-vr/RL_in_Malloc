@@ -1,17 +1,7 @@
-MEMORY_SIZE = 4096
-N_CANDIDATE_BLOCKS = 5
-STATE_SIZE = N_CANDIDATE_BLOCKS * 2 + 1
-ACTION_SIZE = N_CANDIDATE_BLOCKS
-RELEASE_RATE = 0.3
-GAMMA = 0.99
-EPSILON_START = 1.0
-EPSILON_END = 0.01
-EPSILON_DECAY = 0.999
-LEARNING_RATE = 1e-4
-BATCH_SIZE = 64
-REPLAY_BUFFER_SIZE = 10000
-NUM_EPISODES = 10000
-TARGET_UPDATE_FREQ = NUM_EPISODES//200
+"""Backward-compatibility shim.
 
-N_TEST_ROUNDS = 1000
-N_REQUESTS_PER_ROUND = 200
+The implementation now lives in :mod:`rlmalloc.config`.  Importing this flat
+module keeps the historical ``import config`` working.
+"""
+
+from rlmalloc.config import *  # noqa: F401,F403

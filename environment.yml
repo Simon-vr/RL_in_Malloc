@@ -1,0 +1,14 @@
+name: rlmalloc
+channels:
+  - conda-forge
+dependencies:
+  - python=3.12
+  - pip
+  - pip:
+      - numpy==2.5.2
+      # NOTE: this pin is a CUDA build on the reference machine.
+      # Replace with an appropriate wheel if you need CPU-only torch.
+      - torch==2.14.0
+      - matplotlib==3.11.1
+      - tqdm==4.70.0
+      - pytest==9.1.1

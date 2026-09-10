@@ -1,0 +1,23 @@
+cff-version: 1.2.0
+message: "If you use this code, please cite the accompanying paper."
+title: "RLmalloc: A DQN-Based Hybrid Decision Framework for Dynamic Memory Allocation"
+authors:
+  - family-names: Yang
+    given-names: Sicheng
+    affiliation: "School of Computer Science and Engineering, Sun Yat-sen University"
+  - family-names: Ma
+    given-names: Jing
+    affiliation: "School of Automation and Electrical Engineering, University of Jinan"
+version: 0.1.0
+license: MIT
+repository-code: "https://github.com/example/RLmalloc"
+abstract: >-
+  A faithful re-implementation of a DQN-based hybrid decision framework for
+  dynamic memory allocation. The agent selects among a small candidate block
+  set pre-filtered by a First-Fit-style rule, guided by an HHI-based reward.
+keywords:
+  - reinforcement learning
+  - DQN
+  - dynamic memory allocation
+  - fragmentation
+  - Herfindahl-Hirschman Index

@@ -1,16 +1,26 @@
-import numpy as np
-import matplotlib.pyplot as plt
+"""Legacy ``test.py`` demo.
 
-def generate_skewed_alloc_sizes(n=10000, max_size=512):
-    # 使用对数正态分布，mean/log-scale 控制峰值，sigma 控制偏斜程度
-    samples = np.random.lognormal(mean=np.log(32), sigma=0.9)
-    samples = np.clip(samples, 1, max_size)  # 限制最大值
-    return samples.astype(int)  # 转成整数大小
+Previously this module imported matplotlib and called ``plt.show()`` at import
+time.  The logic now lives in :func:`rlmalloc.plotting.plot_histogram` and is
+only executed under ``if __name__ == "__main__"``.
+"""
 
-# 生成并画出直方图
-alloc_sizes = generate_skewed_alloc_sizes()
-plt.hist(alloc_sizes, bins=range(0, 520, 8), color='skyblue', edgecolor='black')
-plt.xlabel("Allocation Size (Bytes)")
-plt.ylabel("Frequency")
-plt.title("Skewed Allocation Size Distribution (max 512B)")
-plt.show()
+from rlmalloc.plotting import plot_histogram  # noqa: F401
+
+
+if __name__ == "__main__":
+    import numpy as np
+
+    from rlmalloc.workloads import sample_request_by_name
+
+    rng = np.random.default_rng(0)
+    samples = np.array(
+        [sample_request_by_name("lognormal_train", rng) for _ in range(10000)]
+    )
+    plot_histogram(
+        samples,
+        "results/figures/fig3_train_hist.png",
+        "results/figures/fig3_train_hist.svg",
+        title="Lognormal(ln32, 0.9), clipped [1,512]",
+    )
+    print("wrote results/figures/fig3_train_hist.png")
