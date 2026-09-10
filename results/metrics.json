@@ -1,0 +1,253 @@
+{
+  "eval": {
+    "bimodal": {
+      "best_fit": {
+        "duration_mean": 55.026,
+        "duration_std": 13.959273763344568,
+        "fragmentation_mean": 0.3767794374935283,
+        "fragmentation_std": 0.18737005683177896,
+        "hhi_complement_mean": 0.5079489665968797,
+        "hhi_complement_std": 0.1941524843640433,
+        "hhi_mean": 0.4920510334031203,
+        "hhi_std": 0.1941524843640433,
+        "occupancy_mean": 0.91761376953125,
+        "occupancy_std": 0.05209096184851096
+      },
+      "dqn": {
+        "duration_mean": 54.193,
+        "duration_std": 13.766326706859749,
+        "fragmentation_mean": 0.45581709127369946,
+        "fragmentation_std": 0.19081500163323475,
+        "hhi_complement_mean": 0.5920085094643734,
+        "hhi_complement_std": 0.18879270180065952,
+        "hhi_mean": 0.40799149053562656,
+        "hhi_std": 0.18879270180065952,
+        "occupancy_mean": 0.902554443359375,
+        "occupancy_std": 0.059605087501551086
+      },
+      "first_fit": {
+        "duration_mean": 54.446,
+        "duration_std": 13.809528739243783,
+        "fragmentation_mean": 0.42366997096608977,
+        "fragmentation_std": 0.18837899157416296,
+        "hhi_complement_mean": 0.5575127614314209,
+        "hhi_complement_std": 0.18857864784825124,
+        "hhi_mean": 0.44248723856857913,
+        "hhi_std": 0.18857864784825124,
+        "occupancy_mean": 0.906379638671875,
+        "occupancy_std": 0.058129219926934074
+      },
+      "worst_fit": {
+        "duration_mean": 47.555,
+        "duration_std": 11.376949283529395,
+        "fragmentation_mean": 0.6733648138635487,
+        "fragmentation_std": 0.11087373182389233,
+        "hhi_complement_mean": 0.7611050333635592,
+        "hhi_complement_std": 0.08561519092454488,
+        "hhi_mean": 0.23889496663644072,
+        "hhi_std": 0.08561519092454488,
+        "occupancy_mean": 0.770058349609375,
+        "occupancy_std": 0.09818390400012088
+      }
+    },
+    "lognormal_large": {
+      "best_fit": {
+        "duration_mean": 34.138,
+        "duration_std": 5.874772846672457,
+        "fragmentation_mean": 0.5277464835234208,
+        "fragmentation_std": 0.15960046913296608,
+        "hhi_complement_mean": 0.6550732032816947,
+        "hhi_complement_std": 0.14274148979119,
+        "hhi_mean": 0.34492679671830534,
+        "hhi_std": 0.14274148979119,
+        "occupancy_mean": 0.91522509765625,
+        "occupancy_std": 0.04414003311435562
+      },
+      "dqn": {
+        "duration_mean": 33.973,
+        "duration_std": 5.7824104835267445,
+        "fragmentation_mean": 0.5538331127815028,
+        "fragmentation_std": 0.15769110945261527,
+        "hhi_complement_mean": 0.6769636232655993,
+        "hhi_complement_std": 0.13787896228450153,
+        "hhi_mean": 0.3230363767344006,
+        "hhi_std": 0.1378789622845015,
+        "occupancy_mean": 0.909805419921875,
+        "occupancy_std": 0.046020373134102295
+      },
+      "first_fit": {
+        "duration_mean": 33.995,
+        "duration_std": 5.855678867560959,
+        "fragmentation_mean": 0.5504020017441789,
+        "fragmentation_std": 0.15660006695026416,
+        "hhi_complement_mean": 0.6737966993987485,
+        "hhi_complement_std": 0.1366506770022806,
+        "hhi_mean": 0.3262033006012516,
+        "hhi_std": 0.1366506770022806,
+        "occupancy_mean": 0.91110693359375,
+        "occupancy_std": 0.04516333842097143
+      },
+      "worst_fit": {
+        "duration_mean": 30.841,
+        "duration_std": 5.141178755888575,
+        "fragmentation_mean": 0.7015206719900422,
+        "fragmentation_std": 0.09342586719926142,
+        "hhi_complement_mean": 0.773085231895945,
+        "hhi_complement_std": 0.07586527536569708,
+        "hhi_mean": 0.22691476810405484,
+        "hhi_std": 0.07586527536569708,
+        "occupancy_mean": 0.8115341796875,
+        "occupancy_std": 0.08455171871886043
+      }
+    },
+    "lognormal_train": {
+      "best_fit": {
+        "duration_mean": 118.591,
+        "duration_std": 15.156045625426179,
+        "fragmentation_mean": 0.6239053362944625,
+        "fragmentation_std": 0.16427338552846232,
+        "hhi_complement_mean": 0.768923319294734,
+        "hhi_complement_std": 0.13215878280066606,
+        "hhi_mean": 0.23107668070526602,
+        "hhi_std": 0.13215878280066606,
+        "occupancy_mean": 0.95883837890625,
+        "occupancy_std": 0.02264960934363136
+      },
+      "dqn": {
+        "duration_mean": 117.278,
+        "duration_std": 14.780957885062795,
+        "fragmentation_mean": 0.6881557405234187,
+        "fragmentation_std": 0.14719938445581965,
+        "hhi_complement_mean": 0.8202353988912384,
+        "hhi_complement_std": 0.11013849835133052,
+        "hhi_mean": 0.1797646011087616,
+        "hhi_std": 0.11013849835133052,
+        "occupancy_mean": 0.948853759765625,
+        "occupancy_std": 0.023214823506356248
+      },
+      "first_fit": {
+        "duration_mean": 117.863,
+        "duration_std": 14.936807925390216,
+        "fragmentation_mean": 0.6700807371856472,
+        "fragmentation_std": 0.15402748380418152,
+        "hhi_complement_mean": 0.8078806969729126,
+        "hhi_complement_std": 0.11704691059867552,
+        "hhi_mean": 0.19211930302708727,
+        "hhi_std": 0.11704691059867552,
+        "occupancy_mean": 0.9534736328125,
+        "occupancy_std": 0.022724769917614848
+      },
+      "worst_fit": {
+        "duration_mean": 99.221,
+        "duration_std": 13.032964321289304,
+        "fragmentation_mean": 0.8722716083824205,
+        "fragmentation_std": 0.0384713438039822,
+        "hhi_complement_mean": 0.9148776218743202,
+        "hhi_complement_std": 0.022509639033542125,
+        "hhi_mean": 0.08512237812567981,
+        "hhi_std": 0.022509639033542125,
+        "occupancy_mean": 0.783806640625,
+        "occupancy_std": 0.06685089747240883
+      }
+    },
+    "uniform": {
+      "best_fit": {
+        "duration_mean": 20.706,
+        "duration_std": 4.216819180377551,
+        "fragmentation_mean": 0.4366434730838942,
+        "fragmentation_std": 0.16910965431696987,
+        "hhi_complement_mean": 0.5492310808689135,
+        "hhi_complement_std": 0.16997572292013413,
+        "hhi_mean": 0.4507689191310866,
+        "hhi_std": 0.16997572292013413,
+        "occupancy_mean": 0.892946044921875,
+        "occupancy_std": 0.05537205822139989
+      },
+      "dqn": {
+        "duration_mean": 20.518,
+        "duration_std": 4.077459503171061,
+        "fragmentation_mean": 0.45806171735721957,
+        "fragmentation_std": 0.1738823880061066,
+        "hhi_complement_mean": 0.5679013091068266,
+        "hhi_complement_std": 0.17322273054173845,
+        "hhi_mean": 0.4320986908931734,
+        "hhi_std": 0.17322273054173845,
+        "occupancy_mean": 0.885693115234375,
+        "occupancy_std": 0.05927703133313776
+      },
+      "first_fit": {
+        "duration_mean": 20.589,
+        "duration_std": 4.127236242329727,
+        "fragmentation_mean": 0.44833253869419376,
+        "fragmentation_std": 0.17292527147825962,
+        "hhi_complement_mean": 0.5580970166405032,
+        "hhi_complement_std": 0.17279316161134878,
+        "hhi_mean": 0.4419029833594969,
+        "hhi_std": 0.17279316161134878,
+        "occupancy_mean": 0.88789599609375,
+        "occupancy_std": 0.05807854463160378
+      },
+      "worst_fit": {
+        "duration_mean": 19.218,
+        "duration_std": 3.7245772914520114,
+        "fragmentation_mean": 0.5528992198368919,
+        "fragmentation_std": 0.16315520677281709,
+        "hhi_complement_mean": 0.6346092211707236,
+        "hhi_complement_std": 0.1547993716465237,
+        "hhi_mean": 0.36539077882927645,
+        "hhi_std": 0.1547993716465237,
+        "occupancy_mean": 0.823878662109375,
+        "occupancy_std": 0.0821393753803528
+      }
+    }
+  },
+  "provenance": {
+    "checkpoint": "results/checkpoints/agent",
+    "checkpoint_meta": {
+      "device": "cuda",
+      "dist": "lognormal_train",
+      "episodes": 10000,
+      "final_epsilon": 0.01,
+      "git_config": {
+        "batch_size": 64,
+        "gamma": 0.99,
+        "lr": 0.0001,
+        "replay": 10000,
+        "target_update_freq": 50
+      },
+      "global_steps": 568654,
+      "learn_every": 1,
+      "max_steps": 2000,
+      "seed": 0,
+      "train_seconds": 1275.5983843803406
+    },
+    "environment": "test-py312",
+    "protocol": {
+      "dists": [
+        "bimodal",
+        "lognormal_large",
+        "lognormal_train",
+        "uniform"
+      ],
+      "policies": [
+        "dqn",
+        "first_fit",
+        "best_fit",
+        "worst_fit"
+      ],
+      "release_rate": 0.3,
+      "requests": 200,
+      "rounds": 1000
+    },
+    "python": "3.12.14",
+    "seed": 0,
+    "torch": "2.14.0+cu130"
+  },
+  "train": {
+    "episodes": 10000,
+    "final_epsilon": 0.01,
+    "global_steps_recorded": 568654,
+    "mean_return_last100": 74.34481637768448,
+    "profile": "full"
+  }
+}
