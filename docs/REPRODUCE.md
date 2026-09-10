@@ -54,8 +54,8 @@ micromamba run -n test-py312 python -m rlmalloc.train \
 ```
 
 **Measured reference run (this repo, RTX 5060 Laptop GPU):**
-`episodes=10000 steps=569879 final_eps=0.0100 mean_return_last100=73.993
-elapsed=1276.6s` (~21.3 min). Final checkpoint at
+`episodes=10000 steps=568654 final_eps=0.0100 mean_return_last100=74.345
+elapsed=1275.6s` (~21.3 min). Final checkpoint at
 `results/checkpoints/agent.pt`.
 
 On pure CPU the same run is roughly an order of magnitude slower; budget

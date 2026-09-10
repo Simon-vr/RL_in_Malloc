@@ -21,16 +21,16 @@
         "occupancy_std": 0.05209096184851096
       },
       "dqn": {
-        "duration_mean": 54.222,
-        "duration_std": 13.749644213578765,
-        "fragmentation_mean": 0.4573940291425381,
-        "fragmentation_std": 0.19196787640028307,
-        "hhi_complement_mean": 0.5939153458033143,
-        "hhi_complement_std": 0.19055177775088658,
-        "hhi_mean": 0.4060846541966857,
-        "hhi_std": 0.19055177775088658,
-        "occupancy_mean": 0.9023564453125,
-        "occupancy_std": 0.06015587412530958
+        "duration_mean": 54.193,
+        "duration_std": 13.766326706859749,
+        "fragmentation_mean": 0.45581709127369946,
+        "fragmentation_std": 0.19081500163323475,
+        "hhi_complement_mean": 0.5920085094643734,
+        "hhi_complement_std": 0.18879270180065952,
+        "hhi_mean": 0.40799149053562656,
+        "hhi_std": 0.18879270180065952,
+        "occupancy_mean": 0.902554443359375,
+        "occupancy_std": 0.059605087501551086
       },
       "first_fit": {
         "duration_mean": 54.446,
@@ -71,16 +71,16 @@
         "occupancy_std": 0.04414003311435562
       },
       "dqn": {
-        "duration_mean": 33.998,
-        "duration_std": 5.8037915193431955,
-        "fragmentation_mean": 0.5562015354519398,
-        "fragmentation_std": 0.1588336223631638,
-        "hhi_complement_mean": 0.6781289763309982,
-        "hhi_complement_std": 0.13880336994930917,
-        "hhi_mean": 0.32187102366900183,
-        "hhi_std": 0.13880336994930917,
-        "occupancy_mean": 0.910580810546875,
-        "occupancy_std": 0.045713137893643646
+        "duration_mean": 33.973,
+        "duration_std": 5.7824104835267445,
+        "fragmentation_mean": 0.5538331127815028,
+        "fragmentation_std": 0.15769110945261527,
+        "hhi_complement_mean": 0.6769636232655993,
+        "hhi_complement_std": 0.13787896228450153,
+        "hhi_mean": 0.3230363767344006,
+        "hhi_std": 0.1378789622845015,
+        "occupancy_mean": 0.909805419921875,
+        "occupancy_std": 0.046020373134102295
       },
       "first_fit": {
         "duration_mean": 33.995,
@@ -121,16 +121,16 @@
         "occupancy_std": 0.02264960934363136
       },
       "dqn": {
-        "duration_mean": 117.485,
-        "duration_std": 14.799384277732639,
-        "fragmentation_mean": 0.684947753588029,
-        "fragmentation_std": 0.14982493286980839,
-        "hhi_complement_mean": 0.8208650701746684,
-        "hhi_complement_std": 0.11000089470014757,
-        "hhi_mean": 0.1791349298253316,
-        "hhi_std": 0.11000089470014757,
-        "occupancy_mean": 0.94997900390625,
-        "occupancy_std": 0.023347918662935185
+        "duration_mean": 117.278,
+        "duration_std": 14.780957885062795,
+        "fragmentation_mean": 0.6881557405234187,
+        "fragmentation_std": 0.14719938445581965,
+        "hhi_complement_mean": 0.8202353988912384,
+        "hhi_complement_std": 0.11013849835133052,
+        "hhi_mean": 0.1797646011087616,
+        "hhi_std": 0.11013849835133052,
+        "occupancy_mean": 0.948853759765625,
+        "occupancy_std": 0.023214823506356248
       },
       "first_fit": {
         "duration_mean": 117.863,
@@ -171,16 +171,16 @@
         "occupancy_std": 0.05537205822139989
       },
       "dqn": {
-        "duration_mean": 20.539,
-        "duration_std": 4.090290820956378,
-        "fragmentation_mean": 0.4538751330796729,
-        "fragmentation_std": 0.17443521975812426,
-        "hhi_complement_mean": 0.5638108656502079,
-        "hhi_complement_std": 0.17400021748133912,
-        "hhi_mean": 0.4361891343497921,
-        "hhi_std": 0.17400021748133912,
-        "occupancy_mean": 0.88600537109375,
-        "occupancy_std": 0.05967926064188931
+        "duration_mean": 20.518,
+        "duration_std": 4.077459503171061,
+        "fragmentation_mean": 0.45806171735721957,
+        "fragmentation_std": 0.1738823880061066,
+        "hhi_complement_mean": 0.5679013091068266,
+        "hhi_complement_std": 0.17322273054173845,
+        "hhi_mean": 0.4320986908931734,
+        "hhi_std": 0.17322273054173845,
+        "occupancy_mean": 0.885693115234375,
+        "occupancy_std": 0.05927703133313776
       },
       "first_fit": {
         "duration_mean": 20.589,

@@ -10,9 +10,9 @@
     "replay": 10000,
     "target_update_freq": 50
   },
-  "global_steps": 569879,
+  "global_steps": 568654,
   "learn_every": 1,
   "max_steps": 2000,
   "seed": 0,
-  "train_seconds": 1276.6419479846954
+  "train_seconds": 1275.5983843803406
 }

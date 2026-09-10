@@ -19,6 +19,8 @@ import os
 import time
 from typing import Dict, List
 
+import numpy as np
+
 from . import config
 from .agent import DQNAgent, save_checkpoint_meta
 from .env import MemoryEnv
@@ -43,7 +45,8 @@ def parse_args(argv: List[str] | None = None) -> argparse.Namespace:
 def train(args: argparse.Namespace) -> Dict[str, float]:
     set_seed(args.seed)
 
-    env = MemoryEnv(dist=args.dist)
+    env = MemoryEnv(dist=args.dist,
+                    rng=np.random.default_rng(args.seed))
     env.set_python_seed(args.seed)
     agent = DQNAgent(device=args.device, seed=args.seed)
 
