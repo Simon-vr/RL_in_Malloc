@@ -145,24 +145,24 @@ distribution). The raw metric table is reproduced from
 [`results/tables/summary.md`](results/tables/summary.md); nothing is hand
 written.
 
-| distribution | policy | occupancy | duration | fragmentation | hhi | hhi_complement |
-|---|---|---|---|---|---|---|
-| lognormal_train | DQN Agent | 0.9489 | 117.28 | 0.6882 | 0.1798 | 0.8202 |
-| lognormal_train | First-Fit | 0.9535 | 117.86 | 0.6701 | 0.1921 | 0.8079 |
-| lognormal_train | Best-Fit | 0.9588 | 118.59 | 0.6239 | 0.2311 | 0.7689 |
-| lognormal_train | Worst-Fit | 0.7838 | 99.22 | 0.8723 | 0.0851 | 0.9149 |
-| lognormal_large | DQN Agent | 0.9098 | 33.97 | 0.5538 | 0.3230 | 0.6770 |
-| lognormal_large | First-Fit | 0.9111 | 33.99 | 0.5504 | 0.3262 | 0.6738 |
-| lognormal_large | Best-Fit | 0.9152 | 34.14 | 0.5277 | 0.3449 | 0.6551 |
-| lognormal_large | Worst-Fit | 0.8115 | 30.84 | 0.7015 | 0.2269 | 0.7731 |
-| uniform | DQN Agent | 0.8857 | 20.52 | 0.4581 | 0.4321 | 0.5679 |
-| uniform | First-Fit | 0.8879 | 20.59 | 0.4483 | 0.4419 | 0.5581 |
-| uniform | Best-Fit | 0.8929 | 20.71 | 0.4366 | 0.4508 | 0.5492 |
-| uniform | Worst-Fit | 0.8239 | 19.22 | 0.5529 | 0.3654 | 0.6346 |
-| bimodal | DQN Agent | 0.9026 | 54.19 | 0.4558 | 0.4080 | 0.5920 |
-| bimodal | First-Fit | 0.9064 | 54.45 | 0.4237 | 0.4425 | 0.5575 |
-| bimodal | Best-Fit | 0.9176 | 55.03 | 0.3768 | 0.4921 | 0.5079 |
-| bimodal | Worst-Fit | 0.7701 | 47.55 | 0.6734 | 0.2389 | 0.7611 |
+| distribution | policy | occupancy | duration | fragmentation | hhi |
+|---|---|---|---|---|---|
+| lognormal_train | DQN Agent | 0.9489 | 117.28 | 0.6882 | 0.1798 |
+| lognormal_train | First-Fit | 0.9535 | 117.86 | 0.6701 | 0.1921 |
+| lognormal_train | Best-Fit | 0.9588 | 118.59 | 0.6239 | 0.2311 |
+| lognormal_train | Worst-Fit | 0.7838 | 99.22 | 0.8723 | 0.0851 |
+| lognormal_large | DQN Agent | 0.9098 | 33.97 | 0.5538 | 0.3230 |
+| lognormal_large | First-Fit | 0.9111 | 33.99 | 0.5504 | 0.3262 |
+| lognormal_large | Best-Fit | 0.9152 | 34.14 | 0.5277 | 0.3449 |
+| lognormal_large | Worst-Fit | 0.8115 | 30.84 | 0.7015 | 0.2269 |
+| uniform | DQN Agent | 0.8857 | 20.52 | 0.4581 | 0.4321 |
+| uniform | First-Fit | 0.8879 | 20.59 | 0.4483 | 0.4419 |
+| uniform | Best-Fit | 0.8929 | 20.71 | 0.4366 | 0.4508 |
+| uniform | Worst-Fit | 0.8239 | 19.22 | 0.5529 | 0.3654 |
+| bimodal | DQN Agent | 0.9026 | 54.19 | 0.4558 | 0.4080 |
+| bimodal | First-Fit | 0.9064 | 54.45 | 0.4237 | 0.4425 |
+| bimodal | Best-Fit | 0.9176 | 55.03 | 0.3768 | 0.4921 |
+| bimodal | Worst-Fit | 0.7701 | 47.55 | 0.6734 | 0.2389 |
 
 **How to read this (and how it relates to the paper).**
 
@@ -182,23 +182,46 @@ written.
   paper reports a small DQN advantage over First-Fit (0.6521 vs 0.6828). The
   gap is small and the training/epsilon schedules are unspecified by the
   paper; we report the measured values rather than tuning to match.
-* Concentration: the paper is internally inconsistent about HHI. Its Eq.(1)
-  defines the raw sum `Σ(lᵢ/S)²`, but the experimental ordering it reports
-  (DQN 0.8165 > First-Fit 0.7942 > Best-Fit 0.7548) only matches the legacy
-  `1 − HHI` convention. Our run reproduces **both**: the raw-sum `hhi` puts
-  the DQN lowest (0.1798 < 0.1921 < 0.2311), while `hhi_complement` puts the
-  DQN highest (0.8202 > 0.8079 > 0.7689), matching the paper's claim. Compare
-  against the paper using the `hhi_complement` column; see
-  [`docs/DEVIATIONS.md`](docs/DEVIATIONS.md) §1.
+* **Concentration (HHI):** we use exactly one definition — the paper's own
+  Eq.(1): `HHI = Σ(lᵢ/S_total)²`, higher = free space more concentrated
+  (healthier). Under it, DQN scores **below** First-Fit and Best-Fit on every
+  distribution (training: 0.1798 < 0.1921 < 0.2311) and well above Worst-Fit,
+  consistent with its slightly higher fragmentation. The paper *prints*
+  numbers of the opposite direction (it shows DQN highest and Worst-Fit
+  highest overall); those values cannot be `Σ(lᵢ/S)²` — they correspond to
+  `1 − HHI`. We deliberately do not report `1 − HHI` as a metric, to avoid two
+  competing definitions; to compare with the paper's printed table, compute
+  `1 − HHI`. Proof and discussion: [`docs/DEVIATIONS.md`](docs/DEVIATIONS.md) §1.
 
-Metric definitions:
+Metric definitions (measured on the end-of-round free list):
 
 * **Occupancy** `1 − S_total/M` (higher better)
-* **Duration** successful allocations (higher better)
+* **Duration** number of successful allocations (higher better)
 * **Fragmentation** `1 − max(lᵢ)/S_total` (lower better)
-* **HHI** `Σ(lᵢ/S_total)²` (higher = more concentrated)
-* **hhi_complement** `1 − HHI` (the convention used by the legacy code / printed
-  paper numbers)
+* **HHI** `Σ(lᵢ/S_total)²` (higher = more concentrated / less fragmented)
+
+### Understanding HHI (one definition, used everywhere)
+
+`HHI = Σ(lᵢ/S_total)²` is the Herfindahl–Hirschman index applied to the
+**free-block size shares** (`lᵢ` = size of free block i, `S_total` = total free
+bytes). It answers one question: *how concentrated is the free space?*
+
+* **Range.** For `N` free blocks, `1/N ≤ HHI ≤ 1`. One single free block →
+  `HHI = 1`; `N` equal blocks → `HHI = 1/N`; memory fully allocated → `HHI = 0`.
+* **Direction.** Higher is better: free space concentrated in a few large
+  blocks is easier to reuse. It is mathematically tied to fragmentation,
+  because `HHI ≤ max(lᵢ)/S_total = 1 − Fragmentation` — so a high HHI always
+  implies low external fragmentation.
+* **Why Worst-Fit has the *lowest* HHI.** Worst-Fit always allocates from the
+  largest free block, which progressively flattens the free list into many
+  similarly sized medium blocks (largest share ≈ 0.13, versus ≈ 0.34–0.37 for
+  First-/Best-Fit). Near-equal shares minimise `Σsᵢ²`, so Worst-Fit scores
+  lowest — exactly the paper's own "N equal fragments → 1/N" illustration.
+* **Relation to the paper.** The paper's equation is this same sum, but the
+  numbers it prints (DQN 0.8165; Worst-Fit highest) are the *complement*
+  `1 − HHI`, which points the other way and is not an HHI. We therefore report
+  only the definition-faithful HHI; compute `1 − HHI` if you need to line up
+  with the paper's printed table.
 
 Figures (all generated from real runs):
 
@@ -273,7 +296,7 @@ RLmalloc/
 ├── docs/                      # METHOD.md / REPRODUCE.md / DEVIATIONS.md + 资源
 ├── rlmalloc/                  # 真实代码包
 ├── scripts/                   # 训练/评估 shell 包装
-├── tests/                     # pytest 单元测试（21 项）
+├── tests/                     # pytest 单元测试（22 项）
 └── results/                   # 指标、表格、图、检查点、原始结果副本
 ```
 
@@ -303,7 +326,7 @@ micromamba env create -f environment.yml   # 创建名为 test-py312 的环境
 ```bash
 cd /home/yangsch/RLmalloc
 
-# 单元测试（21 项，约 1 秒）
+# 单元测试（22 项，约 1 秒）
 micromamba run -n test-py312 python -m pytest -q tests
 
 # 有界冒烟训练（300 回合，CPU，约 2 秒；仅用于验证流程）
@@ -349,24 +372,24 @@ micromamba run -n test-py312 python -m rlmalloc.evaluate \
 21.3 分钟；每个分布 1000 回合评估）。原始表格见
 [`results/tables/summary.md`](results/tables/summary.md)，未手工编造。
 
-| 分布 | 策略 | occupancy | duration | fragmentation | hhi | hhi_complement |
-|---|---|---|---|---|---|---|
-| lognormal_train | DQN Agent | 0.9489 | 117.28 | 0.6882 | 0.1798 | 0.8202 |
-| lognormal_train | First-Fit | 0.9535 | 117.86 | 0.6701 | 0.1921 | 0.8079 |
-| lognormal_train | Best-Fit | 0.9588 | 118.59 | 0.6239 | 0.2311 | 0.7689 |
-| lognormal_train | Worst-Fit | 0.7838 | 99.22 | 0.8723 | 0.0851 | 0.9149 |
-| lognormal_large | DQN Agent | 0.9098 | 33.97 | 0.5538 | 0.3230 | 0.6770 |
-| lognormal_large | First-Fit | 0.9111 | 33.99 | 0.5504 | 0.3262 | 0.6738 |
-| lognormal_large | Best-Fit | 0.9152 | 34.14 | 0.5277 | 0.3449 | 0.6551 |
-| lognormal_large | Worst-Fit | 0.8115 | 30.84 | 0.7015 | 0.2269 | 0.7731 |
-| uniform | DQN Agent | 0.8857 | 20.52 | 0.4581 | 0.4321 | 0.5679 |
-| uniform | First-Fit | 0.8879 | 20.59 | 0.4483 | 0.4419 | 0.5581 |
-| uniform | Best-Fit | 0.8929 | 20.71 | 0.4366 | 0.4508 | 0.5492 |
-| uniform | Worst-Fit | 0.8239 | 19.22 | 0.5529 | 0.3654 | 0.6346 |
-| bimodal | DQN Agent | 0.9026 | 54.19 | 0.4558 | 0.4080 | 0.5920 |
-| bimodal | First-Fit | 0.9064 | 54.45 | 0.4237 | 0.4425 | 0.5575 |
-| bimodal | Best-Fit | 0.9176 | 55.03 | 0.3768 | 0.4921 | 0.5079 |
-| bimodal | Worst-Fit | 0.7701 | 47.55 | 0.6734 | 0.2389 | 0.7611 |
+| 分布 | 策略 | occupancy | duration | fragmentation | hhi |
+|---|---|---|---|---|---|
+| lognormal_train | DQN Agent | 0.9489 | 117.28 | 0.6882 | 0.1798 |
+| lognormal_train | First-Fit | 0.9535 | 117.86 | 0.6701 | 0.1921 |
+| lognormal_train | Best-Fit | 0.9588 | 118.59 | 0.6239 | 0.2311 |
+| lognormal_train | Worst-Fit | 0.7838 | 99.22 | 0.8723 | 0.0851 |
+| lognormal_large | DQN Agent | 0.9098 | 33.97 | 0.5538 | 0.3230 |
+| lognormal_large | First-Fit | 0.9111 | 33.99 | 0.5504 | 0.3262 |
+| lognormal_large | Best-Fit | 0.9152 | 34.14 | 0.5277 | 0.3449 |
+| lognormal_large | Worst-Fit | 0.8115 | 30.84 | 0.7015 | 0.2269 |
+| uniform | DQN Agent | 0.8857 | 20.52 | 0.4581 | 0.4321 |
+| uniform | First-Fit | 0.8879 | 20.59 | 0.4483 | 0.4419 |
+| uniform | Best-Fit | 0.8929 | 20.71 | 0.4366 | 0.4508 |
+| uniform | Worst-Fit | 0.8239 | 19.22 | 0.5529 | 0.3654 |
+| bimodal | DQN Agent | 0.9026 | 54.19 | 0.4558 | 0.4080 |
+| bimodal | First-Fit | 0.9064 | 54.45 | 0.4237 | 0.4425 |
+| bimodal | Best-Fit | 0.9176 | 55.03 | 0.3768 | 0.4921 |
+| bimodal | Worst-Fit | 0.7701 | 47.55 | 0.6734 | 0.2389 |
 
 **如何解读（以及与论文的关系）**
 
@@ -378,20 +401,39 @@ micromamba run -n test-py312 python -m rlmalloc.evaluate \
   回合数/ε 方案，因此我们如实报告实测值，而不调参去贴合论文。
 * **碎片率**：Best-Fit 最低，符合预期。本实现中 First-Fit 在训练分布上略优于
   DQN（0.6701 vs 0.6882）。
-* **集中度（HHI）**：论文内部存在不一致——其 Eq.(1) 定义的是原始和
-  `Σ(lᵢ/S)²`，但其报告的数值（DQN 0.8165 > First-Fit 0.7942 > Best-Fit
-  0.7548）只有在 `1 − HHI` 约定下才成立。本仓库同时给出两列：原始 `hhi` 下
-  DQN 最低（0.1798 < 0.1921 < 0.2311），而 `hhi_complement` 下 DQN 最高
-  （0.8202 > 0.8079 > 0.7689），与论文结论一致。**与论文表格对比时请使用
-  `hhi_complement` 列。**
+* **集中度（HHI）**：本项目**只用一个定义**——论文 Eq.(1)：
+  `HHI = Σ(lᵢ/S_total)²`，越高表示空闲空间越集中（越健康）。在该定义下，
+  DQN 在所有分布上都**低于** First-Fit 与 Best-Fit（训练分布 0.1798 < 0.1921
+  < 0.2311），但明显高于 Worst-Fit，与其略高的碎片率一致。论文**印刷**的数值
+  方向相反（它显示 DQN 最高、且 Worst-Fit 总体最高）；那些值不可能是
+  `Σ(lᵢ/S)²`，它们对应的是 `1 − HHI`。为避免出现两个互相竞争的定义，我们
+  **不**把 `1 − HHI` 作为指标输出；若需与论文印刷表格对照，请自行计算
+  `1 − HHI`。证明与完整讨论见 [`docs/DEVIATIONS.md`](docs/DEVIATIONS.md) §1。
 
-指标定义：
+指标定义（均在轮末空闲链表上测量）：
 
 * **Occupancy** `1 − S_total/M`（越高越好）
 * **Duration** 成功分配次数（越高越好）
 * **Fragmentation** `1 − max(lᵢ)/S_total`（越低越好）
-* **HHI** `Σ(lᵢ/S_total)²`（越高表示空闲空间越集中）
-* **hhi_complement** `1 − HHI`（旧代码/论文印刷值使用的约定）
+* **HHI** `Σ(lᵢ/S_total)²`（越高表示空闲空间越集中、碎片越少）
+
+### 关于 HHI（全项目唯一定义）
+
+`HHI = Σ(lᵢ/S_total)²` 是把 Herfindahl–Hirschman 指数用于**空闲块大小份额**
+（`lᵢ` 为空闲块大小，`S_total` 为总空闲字节）。它回答一个问题：**空闲空间
+有多集中？**
+
+* **取值范围**：`N` 个空闲块时 `1/N ≤ HHI ≤ 1`。单个空闲块 → `HHI = 1`；
+  `N` 个等大块 → `HHI = 1/N`；内存全部占用 → `HHI = 0`。
+* **方向**：越高越好——空闲空间集中在少数大块更易复用。它与碎片率在数学上
+  绑定：`HHI ≤ max(lᵢ)/S_total = 1 − Fragmentation`，故高 HHI 必然对应低碎片。
+* **为什么 Worst-Fit 的 HHI 最低**：Worst-Fit 总是从最大空闲块分配，会逐渐把
+  空闲链表“摊平”成许多大小相近的中等块（最大份额约 0.13，而 First/Best-Fit
+  约 0.34–0.37）。份额越接近相等，`Σsᵢ²` 越小，于是 Worst-Fit 最低——这正是
+  论文自己举的“N 个等分碎片 → 1/N”。
+* **与论文的关系**：论文的公式就是这个和，但它印刷的数值（DQN 0.8165、
+  Worst-Fit 最高）其实是其**补** `1 − HHI`，方向相反、并非 HHI。因此我们只报告
+  定义一致的 HHI；若要对照论文印刷表格，请计算 `1 − HHI`。
 
 图表（均由真实运行生成）：
 

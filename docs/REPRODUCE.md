@@ -24,7 +24,7 @@ cd /home/yangsch/RLmalloc
 micromamba run -n test-py312 python -m pytest -q tests
 ```
 
-Measured: `21 passed in ~1s` (pytest 9.1.1).
+Measured: `22 passed in ~1s` (pytest 9.1.1).
 
 ## 2. Bounded smoke training (quick profile)
 

@@ -8,9 +8,9 @@ environment (`micromamba run -n test-py312 ...`).
 ## 1. How these artifacts were generated
 
 ```bash
-# (a) fast test suite — 21 tests
+# (a) fast test suite — 22 tests
 micromamba run -n test-py312 python -m pytest -q tests
-# -> 21 passed in 0.90s
+# -> 22 passed in ~1s
 
 # (b) bounded smoke training (fresh, deterministic, CPU)
 bash scripts/train_quick.sh
@@ -69,36 +69,37 @@ figures are tracked.
 
 ## 3. Measured results (mean over 1000 rounds)
 
-HHI is the paper's raw convention `Σ(lᵢ/S)²` (higher = more concentrated).
-`hhi_complement = 1 − HHI`.
+HHI uses the unified paper definition `Σ(lᵢ/S)²` (higher = more concentrated).
 
-| distribution | policy | occupancy | duration | fragmentation | hhi | hhi_complement |
-|---|---|---|---|---|---|---|
-| lognormal_train | DQN Agent | 0.9489 | 117.28 | 0.6882 | 0.1798 | 0.8202 |
-| lognormal_train | First-Fit | 0.9535 | 117.86 | 0.6701 | 0.1921 | 0.8079 |
-| lognormal_train | Best-Fit | 0.9588 | 118.59 | 0.6239 | 0.2311 | 0.7689 |
-| lognormal_train | Worst-Fit | 0.7838 | 99.22 | 0.8723 | 0.0851 | 0.9149 |
-| lognormal_large | DQN Agent | 0.9098 | 33.97 | 0.5538 | 0.3230 | 0.6770 |
-| lognormal_large | First-Fit | 0.9111 | 33.99 | 0.5504 | 0.3262 | 0.6738 |
-| lognormal_large | Best-Fit | 0.9152 | 34.14 | 0.5277 | 0.3449 | 0.6551 |
-| lognormal_large | Worst-Fit | 0.8115 | 30.84 | 0.7015 | 0.2269 | 0.7731 |
-| uniform | DQN Agent | 0.8857 | 20.52 | 0.4581 | 0.4321 | 0.5679 |
-| uniform | First-Fit | 0.8879 | 20.59 | 0.4483 | 0.4419 | 0.5581 |
-| uniform | Best-Fit | 0.8929 | 20.71 | 0.4366 | 0.4508 | 0.5492 |
-| uniform | Worst-Fit | 0.8239 | 19.22 | 0.5529 | 0.3654 | 0.6346 |
-| bimodal | DQN Agent | 0.9026 | 54.19 | 0.4558 | 0.4080 | 0.5920 |
-| bimodal | First-Fit | 0.9064 | 54.45 | 0.4237 | 0.4425 | 0.5575 |
-| bimodal | Best-Fit | 0.9176 | 55.03 | 0.3768 | 0.4921 | 0.5079 |
-| bimodal | Worst-Fit | 0.7701 | 47.55 | 0.6734 | 0.2389 | 0.7611 |
+| distribution | policy | occupancy | duration | fragmentation | hhi |
+|---|---|---|---|---|---|
+| lognormal_train | DQN Agent | 0.9489 | 117.28 | 0.6882 | 0.1798 |
+| lognormal_train | First-Fit | 0.9535 | 117.86 | 0.6701 | 0.1921 |
+| lognormal_train | Best-Fit | 0.9588 | 118.59 | 0.6239 | 0.2311 |
+| lognormal_train | Worst-Fit | 0.7838 | 99.22 | 0.8723 | 0.0851 |
+| lognormal_large | DQN Agent | 0.9098 | 33.97 | 0.5538 | 0.3230 |
+| lognormal_large | First-Fit | 0.9111 | 33.99 | 0.5504 | 0.3262 |
+| lognormal_large | Best-Fit | 0.9152 | 34.14 | 0.5277 | 0.3449 |
+| lognormal_large | Worst-Fit | 0.8115 | 30.84 | 0.7015 | 0.2269 |
+| uniform | DQN Agent | 0.8857 | 20.52 | 0.4581 | 0.4321 |
+| uniform | First-Fit | 0.8879 | 20.59 | 0.4483 | 0.4419 |
+| uniform | Best-Fit | 0.8929 | 20.71 | 0.4366 | 0.4508 |
+| uniform | Worst-Fit | 0.8239 | 19.22 | 0.5529 | 0.3654 |
+| bimodal | DQN Agent | 0.9026 | 54.19 | 0.4558 | 0.4080 |
+| bimodal | First-Fit | 0.9064 | 54.45 | 0.4237 | 0.4425 |
+| bimodal | Best-Fit | 0.9176 | 55.03 | 0.3768 | 0.4921 |
+| bimodal | Worst-Fit | 0.7701 | 47.55 | 0.6734 | 0.2389 |
 
 ### Reading the numbers honestly
 
 * **Occupancy / duration:** DQN matches First-Fit and trails Best-Fit by
   ~0.003–0.015 occupancy, while beating Worst-Fit by ~0.08–0.13. This agrees
   with the paper's statement that Best-Fit remains the occupancy gold standard.
-* **HHI:** the paper is internally inconsistent — its Eq. 1 defines the raw
-  sum, but the numbers printed in the paper only match `1 − HHI`. Our raw
-  `hhi` and `hhi_complement` are both reported. See `docs/DEVIATIONS.md` §1.
+* **HHI:** we use one definition, the paper's Eq. 1 (`Σ(lᵢ/S)²`, higher =
+  more concentrated). Under it DQN sits below First-Fit/Best-Fit and above
+  Worst-Fit, consistent with its fragmentation. The paper's printed numbers
+  are the opposite direction and are provably not `Σ(lᵢ/S)²`; compute
+  `1 − HHI` to compare with its table. See `docs/DEVIATIONS.md` §1.
 * **No exact paper reproduction is claimed:** learning rate, episode count,
   ε schedule and the bimodal σ are unspecified in the paper.
 * **Quick profile is a smoke test only:** 300 CPU episodes yield near-zero

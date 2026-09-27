@@ -31,7 +31,7 @@ from .plotting import plot_comparison, plot_dist_grid, plot_histogram
 from .utils import ensure_dir, make_rng, save_json, set_seed, write_csv
 from .workloads import generate_workload, sample_request_by_name
 
-METRICS = ["occupancy", "duration", "fragmentation", "hhi", "hhi_complement"]
+METRICS = ["occupancy", "duration", "fragmentation", "hhi"]
 
 
 def parse_args(argv: List[str] | None = None) -> argparse.Namespace:
@@ -72,7 +72,7 @@ def _run_episode(env: MemoryEnv, policy: str, agent=None,
         done = bool(done_t.item())
         steps += 1
 
-    occupancy, fragmentation, hhi, hhi_complement = compute_metrics(
+    occupancy, fragmentation, hhi = compute_metrics(
         env.free_blocks, env.memory_size
     )
     return {
@@ -80,7 +80,6 @@ def _run_episode(env: MemoryEnv, policy: str, agent=None,
         "duration": float(env.duration),
         "fragmentation": fragmentation,
         "hhi": hhi,
-        "hhi_complement": hhi_complement,
     }
 
 
@@ -195,20 +194,19 @@ def evaluate(args: argparse.Namespace) -> Dict:
 def write_summary_markdown(summary, policies, dists, path: str) -> None:
     ensure_dir(os.path.dirname(path))
     lines = ["# Evaluation summary", "",
-             "Mean over rounds. HHI follows the paper convention "
+             "Mean over rounds. HHI uses the unified paper definition "
              "(`sum((l_i/S)^2)`, higher = more concentrated).", ""]
     header = ["distribution", "policy", "occupancy", "duration",
-              "fragmentation", "hhi", "hhi_complement"]
+              "fragmentation", "hhi"]
     lines.append("| " + " | ".join(header) + " |")
     lines.append("|" + "|".join(["---"] * len(header)) + "|")
     for dist in dists:
         for policy in policies:
             s = summary[dist][policy]
-            lines.append("| {} | {} | {:.4f} | {:.2f} | {:.4f} | {:.4f} | {:.4f} |".format(
+            lines.append("| {} | {} | {:.4f} | {:.2f} | {:.4f} | {:.4f} |".format(
                 dist, DISPLAY_NAMES[policy],
                 s["occupancy_mean"], s["duration_mean"],
                 s["fragmentation_mean"], s["hhi_mean"],
-                s["hhi_complement_mean"],
             ))
     with open(path, "w", encoding="utf-8") as fh:
         fh.write("\n".join(lines) + "\n")

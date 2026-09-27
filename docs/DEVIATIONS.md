@@ -4,28 +4,43 @@ This document lists every place where the paper is ambiguous or silent and
 states exactly what this implementation does, so results can be interpreted
 honestly.
 
-## 1. HHI convention (real ambiguity)
+## 1. HHI: one unified definition (the paper's printed numbers contradict it)
 
-* **Paper** Eq.(1) and Section II.A define
-  `HHI = sum((l_i / S_total)^2)` (raw sum, higher = more concentrated).
-* **Legacy code** reported `1 - sum((l_i / S_total)^2)`.
+This project uses exactly **one** HHI definition, the paper's Eq.(1) /
+Section II.A formula:
 
-**Decision:** the reported metric is the paper-faithful **raw sum** `hhi`.
-The summary additionally exposes `hhi_complement = 1 - hhi`, so readers used
-to the legacy convention can map values directly. The environment *reward*
-always uses the raw sum (it always did).
+    HHI = sum_i (l_i / S_total)^2 ,   S_total = sum_i l_i
 
-The paper is internally inconsistent here: while Eq.(1)/Section II.A define
-the raw sum, the experimental numbers it reports (e.g. DQN 0.8165,
-First-Fit 0.7942, Best-Fit 0.7548) are only consistent with `1 -` raw sum.
-Our full run reproduces that ordering and magnitude under the complement
-convention (DQN 0.8202 > First-Fit 0.8079 > Best-Fit 0.7689), while the raw
-sum is correspondingly small (~0.18). Both columns are emitted; use
-`hhi_complement` to compare against the paper's printed tables.
+applied to the end-of-round free blocks `l_i`. Higher = free space more
+concentrated (fewer / larger free blocks); range `1/N <= HHI <= 1`. The
+environment *reward* uses this same quantity. The legacy code instead reported
+`1 - sum(...)`; that value is not an HHI and is **no longer reported** (there
+is no `hhi_complement` column anywhere).
 
-> Consequence: a raw `hhi` of ~0.20 corresponds to a legacy/paper-style value
-> of ~0.80. Do not compare raw `hhi` to the numbers printed in the legacy
-> `result.txt`.
+**The paper's printed numbers cannot be `sum(s_i^2)`.** For free-block shares
+`s_i = l_i/S_total` (so `sum s_i = 1`, `s_i >= 0`):
+
+    sum_i s_i^2  <=  max_i(s_i) * sum_i s_i  =  max_i(s_i)  =  1 - Fragmentation.
+
+The paper reports DQN fragmentation `0.6521`, i.e. `1 - Fragmentation =
+0.3479`, together with HHI `0.8165`. But `0.8165 > 0.3479`, which is
+impossible for `sum(s_i^2)`. Its numbers instead behave like `1 - HHI`, a
+*scatter / diversity* index that is **larger when free space is more
+fragmented** (it ranks Worst-Fit highest, and our run reproduces that under
+`1 - HHI`). So the paper's metric label/interpretation is inverted relative to
+its own equation.
+
+**Decision and consequence.** Only the definition-faithful `hhi` is reported.
+Under it, DQN sits *below* First-Fit and Best-Fit (training distribution:
+DQN 0.1798 < First-Fit 0.1921 < Best-Fit 0.2311), in line with DQN's slightly
+higher fragmentation; the paper's claim that DQN has the *highest* HHI is an
+artifact of the mislabeled (complement) metric. To compare against the paper's
+printed table, compute `1 - HHI` yourself.
+
+> Why Worst-Fit has the lowest `hhi`: Worst-Fit always allocates from the
+> largest block, flattening the free list into many similar-sized blocks
+> (largest share ~0.13 vs ~0.34-0.37 for First-/Best-Fit). Near-equal shares
+> minimise `sum(s_i^2)` -- the paper's own "N equal fragments -> 1/N".
 
 ## 2. Hyperparameters the paper does not specify
 
