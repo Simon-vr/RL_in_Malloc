@@ -8,8 +8,8 @@ Example
         --out results/checkpoints/agent \
         --log results/metrics/train_log.csv
 
-Target-network updates happen every ``config.TARGET_UPDATE_FREQ`` *steps*
-(paper Alg.1: T = 50).  Epsilon decays once per episode.
+Target-network updates happen every ``config.TARGET_UPDATE_FREQ`` *steps*.
+Epsilon decays once per episode.
 """
 
 from __future__ import annotations

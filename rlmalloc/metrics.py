@@ -1,14 +1,12 @@
-"""Evaluation metrics defined in the paper (Section II.A).
+"""Evaluation metrics.
 
 * Occupancy     = 1 - S_total / M
 * Duration      = number of *successful* allocation requests (tracked by env)
 * Fragmentation = 1 - max(l_i) / S_total          (lower is better)
 * HHI           = sum((l_i / S_total) ** 2)       (higher = more concentrated)
 
-Unified HHI definition
-----------------------
-This project uses exactly **one** HHI definition everywhere: the paper's own
-Eq.(1) / Section II.A formula
+HHI (Herfindahl-Hirschman index of the free-block size shares) is defined once,
+as the sum of squared free-block size shares::
 
     HHI = sum_i (l_i / S_total) ** 2 ,   S_total = sum_i l_i
 
@@ -21,15 +19,8 @@ Properties:
   is free);
 * higher = free space concentrated in fewer / larger blocks = healthy, i.e.
   low external fragmentation;
-* it is bounded above by the largest free share, which equals
-  ``1 - Fragmentation``:  ``HHI <= 1 - Fragmentation``.
-
-The paper's *printed* experimental numbers (e.g. DQN 0.8165, and Worst-Fit
-highest overall) are **not** consistent with this formula -- they behave like
-``1 - HHI``. That complement has the opposite direction (higher = more
-fragmented) and is not the HHI, so it is deliberately **not** reported as a
-metric here. To compare against the paper's printed table, compute
-``1 - HHI``. See ``docs/DEVIATIONS.md`` for the proof.
+* bounded by the largest free share, which equals ``1 - Fragmentation``:
+  ``HHI <= 1 - Fragmentation``.
 """
 
 from __future__ import annotations

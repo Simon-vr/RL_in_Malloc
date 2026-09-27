@@ -1,9 +1,9 @@
 """Allocation policies.
 
-Heuristic baselines operate over *all* free blocks, exactly as the paper
-defines them (p.4 IV.A).  They may therefore pick a block outside the DQN's
-first-k candidate set; this asymmetry is intentional and documented in
-``docs/DEVIATIONS.md``.
+The heuristic baselines (First-Fit, Best-Fit, Worst-Fit) search **all** free
+blocks, so they have a wider effective action set than the DQN, which only
+sees the first ``k`` candidates.  This asymmetry is intentional and is
+discussed in ``docs/DESIGN.md``.
 
 The DQN "policy" is not a block-picking function: the agent outputs an index
 into the canonical candidate set and :meth:`rlmalloc.env.MemoryEnv.step`

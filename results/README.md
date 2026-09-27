@@ -1,63 +1,26 @@
-# RLmalloc — experiment artifacts
+# Results
 
-This directory holds every artifact produced by the re-run of the experiments.
-All numbers come from real runs; nothing here is hand-entered. The commands
-below were executed from `/home/yangsch/RLmalloc` using only the isolated
-environment (`micromamba run -n test-py312 ...`).
-
-## 1. How these artifacts were generated
+Catalog of every artifact under `results/`, plus the measured numbers and the
+exact commands that produced them. All Python commands run in the isolated
+environment `test-py312`:
 
 ```bash
-# (a) fast test suite — 22 tests
-micromamba run -n test-py312 python -m pytest -q tests
-# -> 22 passed in ~1s
-
-# (b) bounded smoke training (fresh, deterministic, CPU)
-bash scripts/train_quick.sh
-# -> episodes=300 steps=439 final_eps=0.7407 mean_return_last100=-0.234 elapsed=1.7s
-
-# (c) full paper-scale evaluation using the committed 10000-episode checkpoint
-#     (4 policies x 4 distributions x 1000 rounds x 200 requests)
-bash scripts/evaluate.sh
-# -> 21.8s wall clock; metrics below
-
-# (d) extra figures + consolidated machine-readable index
-micromamba run -n test-py312 python -m rlmalloc.plotting
-micromamba run -n test-py312 python scripts/plot_training_curve.py \
-    --log results/metrics/train_log.csv --out results/figures/fig3_train_curve
-micromamba run -n test-py312 python scripts/make_results_index.py
+micromamba run -n test-py312 python ...
 ```
 
-The full 10 000-episode training that produced
-`checkpoints/agent.pt` was executed with:
+## 1. Artifact index
 
-```bash
-micromamba run -n test-py312 python -m rlmalloc.train \
-  --dist lognormal_train --episodes 10000 --max-steps 2000 \
-  --seed 0 --device cuda --out results/checkpoints/agent \
-  --log results/metrics/train_log.csv
-# -> episodes=10000 steps=568654 final_eps=0.0100
-#    mean_return_last100=74.345 elapsed=1275.6s (~21.3 min, RTX 5060 Laptop GPU)
-```
-
-`train_log.csv` in this directory is that run's real log. The bounded quick
-profile was re-run here to confirm the pipeline, and two identical `--seed 0`
-quick runs were diffed: the CSVs are byte-identical (deterministic).
-
-## 2. Artifact catalog
-
-| Path | What it is |
+| Artifact | Description |
 |---|---|
-| `metrics.json` | **Consolidated machine-readable results**: provenance (env, protocol, checkpoint meta, train summary) + full eval summary. |
-| `metrics/eval_summary.json` | Per-distribution, per-policy mean/std for all 5 metrics. |
-| `metrics/eval_summary.csv` | Same summary as a flat CSV (one row per dist×policy). |
-| `metrics/eval_per_round.csv` | Long-format raw data: 16 000 rows (4 dists × 1000 rounds × 4 policies). Primary source for any re-analysis. |
-| `metrics/train_log.csv` | Full training log, 10 000 episodes (return, steps, epsilon, loss, occupancy). |
-| `metrics/train_log_quick.csv` | Bounded quick-profile training log (300 episodes). |
-| `tables/summary.md` | Human-readable markdown summary table. |
-| `figures/fig3_train_hist.{png,svg}` | Training request-size distribution (lognormal, clipped). |
-| `figures/fig3_train_curve.{png,svg}` | Learning curve from the real `train_log.csv` (100-episode rolling mean of return and env steps). |
-| `figures/fig4_<dist>.{png,svg}` | Request-size histograms for the four test distributions. |
+| `metrics.json` | Consolidated machine-readable provenance + train + eval summary. |
+| `metrics/train_log.csv` | Per-episode training log (10 000 rows): return, steps, duration, epsilon, loss, occupancy. |
+| `metrics/train_log_quick.csv` | Per-episode log of the bounded smoke run (300 episodes). |
+| `metrics/eval_per_round.csv` | Per-round × policy × distribution metrics (16 000 rows). |
+| `metrics/eval_summary.csv` / `.json` | Mean/std summary over rounds (16 dist × policy rows). |
+| `tables/summary.md` | Markdown results table. |
+| `figures/fig3_train_hist.{png,svg}` | Training request-size histogram. |
+| `figures/fig3_train_curve.{png,svg}` | Training learning curve (return / epsilon). |
+| `figures/fig4_<dist>.{png,svg}` | Request-size histograms for the four evaluation workloads. |
 | `figures/fig5_comparison_<dist>.{png,svg}` | 2×2 policy comparison (occupancy, duration, fragmentation, HHI) per distribution. |
 | `figures/fig5_{occupancy,duration,fragmentation,hhi}_all.{png,svg}` | Cross-distribution grouped bars for each metric. |
 | `checkpoints/agent.pt`, `agent_target.pt`, `agent_meta.json` | Full trained DQN (10 000 episodes) + target net + metadata. |
@@ -67,9 +30,40 @@ quick runs were diffed: the CSVs are byte-identical (deterministic).
 Generated `.pt` checkpoints are git-ignored (regenerable); logs, tables and
 figures are tracked.
 
+## 2. Reproduce
+
+```bash
+# (a) fast test suite — 22 tests
+micromamba run -n test-py312 python -m pytest -q tests
+# -> 22 passed in ~1s
+
+# (b) bounded smoke training (CPU, ~2 s)
+bash scripts/train_quick.sh
+
+# (c) full training (10 000 episodes; GPU recommended)
+micromamba run -n test-py312 python -m rlmalloc.train \
+  --dist lognormal_train --episodes 10000 --max-steps 2000 \
+  --seed 0 --device cuda --out results/checkpoints/agent \
+  --log results/metrics/train_log.csv
+
+# (d) full evaluation (4 policies x 4 distributions x 1000 rounds, ~22 s)
+bash scripts/evaluate.sh
+
+# (e) rebuild consolidated metrics.json
+micromamba run -n test-py312 python scripts/make_results_index.py
+
+# (f) extra figures
+micromamba run -n test-py312 python -m rlmalloc.plotting
+micromamba run -n test-py312 python scripts/plot_training_curve.py \
+  --log results/metrics/train_log.csv --out results/figures/fig3_train_curve
+```
+
+Measured reference run: `episodes=10000 steps=568654 final_eps=0.0100
+mean_return_last100=74.345 elapsed=1275.6s` on an RTX 5060 Laptop GPU.
+
 ## 3. Measured results (mean over 1000 rounds)
 
-HHI uses the unified paper definition `Σ(lᵢ/S)²` (higher = more concentrated).
+HHI uses the unified definition `Σ(lᵢ/S)²` (higher = more concentrated).
 
 | distribution | policy | occupancy | duration | fragmentation | hhi |
 |---|---|---|---|---|---|
@@ -92,29 +86,22 @@ HHI uses the unified paper definition `Σ(lᵢ/S)²` (higher = more concentrated
 
 ### Reading the numbers honestly
 
-* **Occupancy / duration:** DQN matches First-Fit and trails Best-Fit by
-  ~0.003–0.015 occupancy, while beating Worst-Fit by ~0.08–0.13. This agrees
-  with the paper's statement that Best-Fit remains the occupancy gold standard.
-* **HHI:** we use one definition, the paper's Eq. 1 (`Σ(lᵢ/S)²`, higher =
-  more concentrated). Under it DQN sits below First-Fit/Best-Fit and above
-  Worst-Fit, consistent with its fragmentation. The paper's printed numbers
-  are the opposite direction and are provably not `Σ(lᵢ/S)²`; compute
-  `1 − HHI` to compare with its table. See `docs/DEVIATIONS.md` §1.
-* **No exact paper reproduction is claimed:** learning rate, episode count,
-  ε schedule and the bimodal σ are unspecified in the paper.
-* **Quick profile is a smoke test only:** 300 CPU episodes yield near-zero
-  return (`-0.234`) and are not a trained policy.
+* **Occupancy / duration / fragmentation:** Best-Fit is best on all three,
+  Worst-Fit is worst, and the DQN sits between them close to (very slightly
+  below) First-Fit. The learned policy does **not** beat Best-Fit.
+* **HHI:** higher = more concentrated. Ordering is Best-Fit > First-Fit > DQN >
+  Worst-Fit. The reason Worst-Fit is lowest is that it flattens the free list
+  into many similar-sized blocks (see `docs/DESIGN.md` §3).
+* **Single seed, no error bars:** the DQN↔First-Fit gaps are small and may not
+  be statistically meaningful.
+* **Quick profile is a smoke test only:** 300 CPU episodes yield a near-zero
+  return and are not a trained policy.
 
 ## 4. Provenance
 
-* Environment: conda env `test-py312`, Python and Torch versions recorded in
-  `metrics.json` → `provenance.environment`.
-* Seed: `0`. Every round uses `make_rng(seed, round_idx)`; all policies in a
-  round see the *same* event list (fair paired comparison).
-* Eval protocol: 1000 rounds, 200 requests/round, release rate 0.3,
-  max 2000 steps/round.
-* Checkpoint metadata (`provenance.checkpoint_meta`): 10 000 episodes,
-  568 654 env steps, final ε = 0.01.
-* Originals preserved and verified byte-identical to
-  `backups/pre-refactor/` via `md5sum`
-  (PDF `5141a8a1…`, `result.txt` `55d30f95…`).
+* Environment: conda env `test-py312`; Python / Torch versions recorded in
+  `metrics.json` → `provenance`.
+* Evaluation protocol: seed 0, 1000 rounds, 200 requests/round, release rate
+  0.3, four distributions, policies `dqn`, `first_fit`, `best_fit`,
+  `worst_fit`, all replayed on identical per-round workloads.
+* Checkpoints are git-ignored; regenerate them with the commands above.

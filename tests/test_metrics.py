@@ -1,4 +1,4 @@
-"""Tests for the metric definitions (paper Section II.A / Eq.1).
+"""Tests for the metric definitions.
 
 The single unified HHI is ``sum((l_i/S_total)^2)``.
 """

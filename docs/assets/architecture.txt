@@ -1,4 +1,4 @@
-FIGURE 1 - SYSTEM ARCHITECTURE (paper Fig. 1)
+SYSTEM ARCHITECTURE
 
   +----------------------------+        action index i in {0..4}
   |         DQN Agent          |<--------------------------------+
@@ -17,7 +17,7 @@ FIGURE 1 - SYSTEM ARCHITECTURE (paper Fig. 1)
   |   Memory space (M=4096)    |
   +----------------------------+
 
-FIGURE 2 - STATE VECTOR (paper Fig. 2)
+STATE VECTOR
 
   index:  0      1      2      3      ...    8      9      10
         [ sz0/M, a0/M, sz1/M, a1/M, ..., sz4/M, a4/M, req/M ]

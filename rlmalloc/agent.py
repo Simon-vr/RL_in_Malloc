@@ -1,7 +1,7 @@
 """DQN agent: 11 -> 128 -> 128 -> 5 ReLU MLP with replay + target network.
 
-Matches the paper (p.3 III.C.1 network; Algorithm 1 hyper-parameters
-B=64, gamma=0.99, C=10000, T=50).
+Standard value-based DQN: epsilon-greedy behaviour, experience replay and a
+periodically-synced target network, trained with SmoothL1 loss.
 """
 
 from __future__ import annotations

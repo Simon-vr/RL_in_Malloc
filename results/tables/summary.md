@@ -1,6 +1,6 @@
 # Evaluation summary
 
-Mean over rounds. HHI uses the unified paper definition (`sum((l_i/S)^2)`, higher = more concentrated).
+Mean over rounds. HHI uses the unified definition (`sum((l_i/S)^2)`, higher = more concentrated).
 
 | distribution | policy | occupancy | duration | fragmentation | hhi |
 |---|---|---|---|---|---|

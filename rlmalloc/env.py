@@ -8,7 +8,7 @@ Two modes:
   by :func:`rlmalloc.workloads.generate_workload`.  Free events resolve an
   allocation *ordinal* (the n-th successful allocation) to its block.
 
-Key behaviour (paper Section III.B):
+Key behaviour:
 
 * candidate set = :func:`rlmalloc.candidates.build_candidates` (sorted by
   start address, first k that fit) -- used by both state and action decoding;

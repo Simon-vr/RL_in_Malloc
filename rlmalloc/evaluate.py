@@ -1,7 +1,7 @@
 """Evaluation / benchmark entrypoint.
 
-Fair protocol (paper p.4 IV.A): for each round we generate ONE event list and
-run every policy on that exact same list.  Rounds are reproducible via
+Fair protocol: for each round we generate ONE event list and run every policy
+on that exact same list.  Rounds are reproducible via
 ``make_rng(seed, round_idx)``.
 
 Example
@@ -194,7 +194,7 @@ def evaluate(args: argparse.Namespace) -> Dict:
 def write_summary_markdown(summary, policies, dists, path: str) -> None:
     ensure_dir(os.path.dirname(path))
     lines = ["# Evaluation summary", "",
-             "Mean over rounds. HHI uses the unified paper definition "
+             "Mean over rounds. HHI uses the unified definition "
              "(`sum((l_i/S)^2)`, higher = more concentrated).", ""]
     header = ["distribution", "policy", "occupancy", "duration",
               "fragmentation", "hhi"]

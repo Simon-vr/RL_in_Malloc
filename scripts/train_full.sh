@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Paper-scale training. LONG-RUNNING: ~10 h on CPU at ~10 ms/step.
+# Full-scale training. LONG-RUNNING: ~10 h on CPU at ~10 ms/step.
 # Use --device cuda and/or a GPU host if available (not guaranteed faster at
 # batch size 64).
 set -euo pipefail

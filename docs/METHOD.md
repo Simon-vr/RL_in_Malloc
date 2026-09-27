@@ -1,89 +1,163 @@
-# Method — spec to code mapping
+# Method
 
-Paper: *A DQN-Based Hybrid Decision Framework for Dynamic Memory Allocation*
-(Sicheng Yang, Jing Ma). The PDF is kept at the repository root and copied to
-`docs/assets/paper.pdf`.
+This document describes the environment, the MDP, the network, training, the
+workloads and the evaluation protocol. File/line pointers refer to the
+`rlmalloc/` package.
 
-## 1. Problem setup (paper Section II.A)
+## 1. Problem setup
 
-Memory of size `M = 4096` (`rlmalloc/config.py: MEMORY_SIZE`). A free-block
-set `F = {(a_i, l_i)}` is maintained as a sorted list; an allocated-block
-dictionary maps allocation ordinal -> `(start, size)`.
+A simulated arena of `M = 4096` bytes (`rlmalloc/config.py: MEMORY_SIZE`) is
+managed as:
 
-Metrics (`rlmalloc/metrics.py`):
+* a **free-block list** `F = {(aᵢ, lᵢ)}` kept sorted by start address, where
+  `aᵢ` is the start address and `lᵢ` the size;
+* an **allocated dictionary** mapping allocation ordinal → `(start, size)`.
+
+A workload is a sequence of requests:
+
+* **allocation** of a contiguous block of `s` bytes: a free block with
+  `size >= s` is chosen; if it is larger, the remainder is returned to the
+  free list as a new (smaller) block; if no block fits, the allocation fails;
+* **deallocation** of a previously allocated block.
+
+Adjacent free blocks are coalesced whenever the free list changes
+(`MemoryEnv._merge_free_blocks`).
+
+Four evaluation metrics are computed on the end-of-round free list
+(`rlmalloc/metrics.py`):
 
 | Metric | Formula | Direction |
 |---|---|---|
-| Occupancy | `1 - S_total / M` | higher better |
+| Occupancy | `1 − S_total / M` | higher better |
 | Duration | number of successful allocations | higher better |
-| Fragmentation | `1 - max(l_i) / S_total` | lower better |
-| HHI | `sum((l_i / S_total)^2)` | higher = more concentrated |
+| Fragmentation | `1 − max(lᵢ) / S_total` | lower better |
+| HHI | `Σ(lᵢ / S_total)²` | higher = more concentrated |
 
-## 2. MDP (paper Section III.B)
+`S_total = Σᵢ lᵢ` is the total free space.
 
-### State (`2k+1 = 11`) — `rlmalloc/env.py::_get_state` (line 143)
+## 2. MDP formulation
+
+### State (`2k + 1 = 11`) — `MemoryEnv._get_state`
+
 For the current request, build the candidate set with
-`rlmalloc/candidates.py::build_candidates` (line 20) (sort by start address ascending,
-keep the first `k = 5` blocks with `size >= request`). Each candidate `i`
-contributes `[size/M, start/M]`; the final element is `request/M`. Empty
-slots are zero-padded. Because state building and action decoding share the
-same function, the historical state/action mismatch cannot recur.
+`rlmalloc/candidates.py::build_candidates` (sort free blocks by start address
+ascending, keep the first `k = 5` with `size >= request`). Each candidate `i`
+contributes two normalised values `[size_i / M, start_i / M]`; the last element
+is `request / M`. Unused candidate slots are zero-padded.
 
-### Action (`A = {0..k-1}`) — `rlmalloc/env.py::step` (line 206)
-Action `i` selects candidate `i`. `policies.dqn_action` is a thin adapter that
-just returns the agent's greedy index; it does **not** re-sort blocks.
+Because the **same** `build_candidates` function feeds both the state encoder
+and the action decoder, the block the agent sees at slot `i` is exactly the
+block that action `i` allocates. (An earlier version sorted the two
+differently, which silently invalidated the learned policy; that is why the
+candidate builder is a single shared function and is covered by a regression
+test.)
 
-### Reward (Eq.1) — `rlmalloc/env.py::_reward` (line 159)
-`R = sum((l_i / S_total)^2)` over the free-block set, `0` when `S_total = 0`.
-Bounded in `[0, 1]`. See `docs/DEVIATIONS.md` for the HHI convention note.
+### Action (`0 .. k−1`) — `MemoryEnv.step`
 
-### Invalid action — `rlmalloc/env.py::step` (line 206)
-If the action index is out of range for the candidate set, return reward
-`-1.0` and `done = True` (paper p.3 III.B.4).
+Action `i` selects candidate `i`. `rlmalloc/policies.py::dqn_action` is a thin
+adapter that returns the agent's greedy index; it does **not** re-sort blocks.
 
-### Termination — `rlmalloc/env.py::is_done` (line 165)
+### Reward — `MemoryEnv._reward`
+
+`R = Σ(lᵢ / S_total)²` over the free-block set, and `R = 0` when `S_total = 0`.
+This is the HHI of the free-space shares, bounded in `[0, 1]`: `R = 1` when the
+free space is one contiguous block, `R = 1/N` for `N` equal fragments. See
+[`DESIGN.md`](DESIGN.md) for why this is a *proxy* objective.
+
+### Invalid action — `MemoryEnv.step`
+
+If the action index is out of range for the candidate set, the environment
+returns reward `-1.0` **and** `done = True`, so the episode ends immediately.
+
+### Termination — `MemoryEnv.is_done`
+
 True when the event list is exhausted (evaluation) or no free block fits the
-current request (both modes).
+current request (both training and evaluation).
 
-## 3. Network (paper Section III.C.1) — `rlmalloc/agent.py::QNetwork` (line 27)
+## 3. Network — `rlmalloc/agent.py::QNetwork`
 
-`11 -> 128 -> ReLU -> 128 -> ReLU -> 5`, trained with the standard DQN
-recipe: experience replay (`C = 10000`), target network (`T = 50` **steps**),
-SmoothL1 loss, Adam. Hyperparameters live in `rlmalloc/config.py` and are
-tagged `[PAPER]` or `[CODE]`.
+```
+11 → Linear(128) → ReLU → Linear(128) → ReLU → Linear(5)
+```
 
-## 4. Training (Algorithm 1) — `rlmalloc/train.py`
+Trained as a standard value-based DQN: experience replay
+(`REPLAY_BUFFER_SIZE = 10000`), a target network copied every
+`TARGET_UPDATE_FREQ = 50` environment steps, SmoothL1 loss, Adam
+(`LEARNING_RATE = 1e-4`), epsilon-greedy behaviour with
+`1.0 → 0.01` multiplicative decay (`0.999` per episode).
 
-* epsilon-greedy action selection, epsilon decayed once per episode;
-* one gradient step every `LEARN_EVERY` env steps (default 1);
-* target-network copy every `TARGET_UPDATE_FREQ = 50` env steps;
-* per-episode CSV log: `episode, return, steps, duration, epsilon,
-  mean_loss, occupancy_end`.
+All hyperparameters live in `rlmalloc/config.py`.
 
-## 5. Workloads (paper Section IV.B) — `rlmalloc/workloads.py`
+## 4. Training — `rlmalloc/train.py`
 
-`DISTRIBUTIONS` (in `config.py`):
+* epsilon-greedy action selection; epsilon decayed once per episode;
+* one gradient step every `LEARN_EVERY` environment steps (default 1);
+* target-network copy every `TARGET_UPDATE_FREQ = 50` environment steps;
+* per-episode CSV log: `episode, return, steps, duration, epsilon, mean_loss,
+  occupancy_end`;
+* a bounded `MAX_STEPS_PER_EPISODE` safety cap prevents runaway episodes.
+
+Run:
+
+```bash
+micromamba run -n test-py312 python -m rlmalloc.train \
+  --dist lognormal_train --episodes 10000 --max-steps 2000 \
+  --seed 0 --device cuda --out results/checkpoints/agent \
+  --log results/metrics/train_log.csv
+```
+
+## 5. Workloads — `rlmalloc/workloads.py`
+
+`DISTRIBUTIONS` (in `config.py`) defines four request-size distributions. In all
+of them sizes are clipped to `[1, 512]`.
 
 | Name | Spec |
 |---|---|
-| `lognormal_train` | `clip(Lognormal(ln32, 0.9), 1, 512)` — Eq.(2) |
-| `lognormal_large` | `clip(Lognormal(ln128, 0.7), 1, 512)` |
+| `lognormal_train` | `clip(Lognormal(ln 32, σ=0.9), 1, 512)` — default training workload |
+| `lognormal_large` | `clip(Lognormal(ln 128, σ=0.7), 1, 512)` |
 | `uniform` | `Uniform{1..512}` |
-| `bimodal` | 70% `Lognormal(ln16, 0.9)` + 30% `Lognormal(ln256, 0.9)` |
+| `bimodal` | 70% `Lognormal(ln 16, σ=0.9)` + 30% `Lognormal(ln 256, σ=0.9)` |
 
-Evaluation event lists are generated from an *optimistic reference timeline*
-(all allocations succeed), so every `free` event references a live allocation
-ordinal. All policies in a round replay the exact same list.
+`generate_workload` builds an explicit event list. It uses an **optimistic
+reference timeline**: every allocation is assumed to succeed, so every `free`
+event refers to an allocation ordinal that is guaranteed to be live on the
+reference path. A real policy that fails early simply stops before reaching the
+later free events and therefore never has to resolve an absent ordinal. All
+policies in a round replay the exact same event list.
 
-## 6. Baselines (paper Section IV.A) — `rlmalloc/policies.py`
+## 6. Baselines — `rlmalloc/policies.py`
 
-`first_fit`, `best_fit`, `worst_fit` traverse **all** free blocks, exactly as
-the paper defines them. This is intentionally a wider search than the DQN's
-first-`k` candidate set.
+`first_fit`, `best_fit` and `worst_fit` traverse **all** free blocks:
 
-## 7. Evaluation — `rlmalloc/evaluate.py`
+* **First-Fit** — the lowest-address block that fits.
+* **Best-Fit** — the fitting block with the smallest leftover.
+* **Worst-Fit** — the largest fitting block.
 
-For each distribution and round `r`: `rng = make_rng(seed, r)`, build one
-workload, run all policies on it. Writes per-round and summary CSV/JSON, a
-Markdown table (`results/tables/summary.md`), and figures under
-`results/figures/`.
+They therefore have a wider effective action set than the DQN's first-`k`
+candidate set; this asymmetry is intrinsic to the current framing and is
+discussed in [`DESIGN.md`](DESIGN.md).
+
+## 7. Evaluation protocol — `rlmalloc/evaluate.py`
+
+For each distribution and each round `r`: `rng = make_rng(seed, r)`, generate
+one workload, then run **all** policies on that identical workload. Outputs:
+
+* per-round long CSV (`results/metrics/eval_per_round.csv`);
+* summary CSV/JSON (`eval_summary.csv`, `eval_summary.json`);
+* a Markdown table (`results/tables/summary.md`);
+* figures under `results/figures/`.
+
+## 8. Code map
+
+| Concern | Module |
+|---|---|
+| Candidate rule | `rlmalloc/candidates.py` |
+| Environment / MDP | `rlmalloc/env.py` |
+| Metrics | `rlmalloc/metrics.py` |
+| Network / agent | `rlmalloc/agent.py` |
+| Heuristics | `rlmalloc/policies.py` |
+| Workloads | `rlmalloc/workloads.py` |
+| Training | `rlmalloc/train.py` |
+| Evaluation | `rlmalloc/evaluate.py` |
+| Figures | `rlmalloc/plotting.py` |
+| Config | `rlmalloc/config.py` |

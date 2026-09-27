@@ -14,3 +14,6 @@ rlmalloc/results/checkpoints/*.pt
 
 # OS
 .DS_Store
+
+# Local reference document (not part of the project)
+A DQN-Based Hybrid Decision Framework for Dynamic Memory Allocation(1).pdf

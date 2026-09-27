@@ -3,11 +3,11 @@
 This is the *single source of truth* for the candidate set used by both the
 state builder (:mod:`rlmalloc.env`) and the action decoder (also
 :mod:`rlmalloc.env`).  Keeping one function is what prevents the historical
-state/action mismatch bug (state listed blocks sorted by size/start in one
-order, while the action was decoded in another).
+state/action mismatch bug (state listed blocks in one order while the action
+was decoded in another).
 
-Paper reference: p.2 III.B.1 -- "sort by start address in ascending order and
-take the first k free blocks whose sizes satisfy the current request".
+Candidate rule: sort free blocks by start address ascending and keep the first
+``k`` whose size satisfies the current request.
 """
 
 from __future__ import annotations

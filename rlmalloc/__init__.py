@@ -1,12 +1,9 @@
-"""RLmalloc: a DQN-based hybrid decision framework for dynamic memory allocation.
+"""RLmalloc: a DQN-based dynamic memory allocator.
 
-Faithful re-implementation of:
-
-    Sicheng Yang, Jing Ma.
-    "A DQN-Based Hybrid Decision Framework for Dynamic Memory Allocation".
-
-See ``docs/METHOD.md`` for the spec -> code mapping and ``docs/DEVIATIONS.md``
-for the documented assumptions / ambiguities.
+The agent observes a small set of candidate free blocks (pre-filtered by a
+First-Fit-style rule) and learns to pick one, guided by a free-space
+concentration reward.  See ``docs/METHOD.md`` for the design and
+``docs/DESIGN.md`` for the documented assumptions and limitations.
 """
 
 __version__ = "0.1.0"
