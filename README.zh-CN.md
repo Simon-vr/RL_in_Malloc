@@ -6,11 +6,7 @@
 从少量候选空闲块中选择一个来分配，奖励函数鼓励空闲空间保持**集中**（健康）。
 项目将它与经典的 First-Fit、Best-Fit、Worst-Fit 策略在四种请求分布上对比。
 
-> **诚实状态**：学习到的策略结果**一般、甚至偏消极**。它大致与 First-Fit
-> 持平，在占用率 / 服务时长 / 碎片率上明显**不如 Best-Fit**，只明显强于
-> Worst-Fit。它**并不是**比 Best-Fit 更好的分配器。第 8 节会直说其不足与可能
-> 原因；没有任何数值是为了"好看"而调出来的。本仓库中的所有数字与图都来自
-> 本仓库代码的真实运行。
+本仓库中的所有数字与图都来自本仓库代码的真实运行。
 
 ## 目录
 
@@ -21,7 +17,7 @@
 5. [安装](#5-安装)
 6. [快速开始](#6-快速开始)
 7. [复现完整结果](#7-复现完整结果)
-8. [诚实评估：不足与可能原因](#8-诚实评估不足与可能原因)
+8. [局限与可能原因](#8-局限与可能原因)
 9. [指标（以及 HHI 的定义）](#9-指标以及-hhi-的定义)
 10. [测试](#10-测试)
 11. [文档索引](#11-文档索引)
@@ -75,7 +71,7 @@ DQN 从中选择一个。奖励是空闲空间的 *Herfindahl–Hirschman 指数
 
 ### 2.4 结果表
 
-每个分布 1000 回合的均值（无误差棒——原因见第 8 节）。原始表格：
+每个分布 1000 回合的均值（单一种子；见第 8 节）。原始表格：
 [`results/tables/summary.md`](results/tables/summary.md)。
 
 | 分布 | 策略 | occupancy | duration | fragmentation | hhi |
@@ -126,8 +122,7 @@ RLmalloc/
 ├── LICENSE
 ├── requirements.txt  requirements-dev.txt  environment.yml
 ├── conftest.py
-├── config.py agent.py env.py utils.py main.py test.py   # 兼容旧入口的 shim
-├── docs/
+├── config.py agent.py env.py utils.py main.py test.py   # 兼容旧入口的 shim├── docs/
 │   ├── METHOD.md  METHOD.zh-CN.md
 │   ├── DESIGN.md  DESIGN.zh-CN.md
 │   ├── REPRODUCE.md  REPRODUCE.zh-CN.md
@@ -209,17 +204,17 @@ micromamba run -n test-py312 python -m rlmalloc.evaluate \
 （`episodes=10000 steps=568654`），完整评估**约 22 秒**。确切命令、输出与产物
 清单见 [`docs/REPRODUCE.zh-CN.md`](docs/REPRODUCE.zh-CN.md)。
 
-## 8. 诚实评估：不足与可能原因
+## 8. 局限与可能原因
 
-结果**弱于预期**，有必要直说：
+学习到的策略未超过 Best-Fit。主要观察：
 
-* **从未超过 Best-Fit。** 在每种分布、每个经典指标（占用率、时长、碎片率）上，
-  Best-Fit 都更好。
-* **仅略胜 First-Fit，甚至不敌。** 在训练分布上，First-Fit 的碎片率反而略低
+* **Best-Fit 在每个经典指标上都更强。** 在四种分布上，占用率、时长、碎片率均
+  偏向 Best-Fit。
+* **相对 First-Fit 的优势很小。** 在训练分布上，First-Fit 的碎片率反而略低
   （0.6701 vs 0.6882）。
-* **只明显强于 Worst-Fit**，而这算不上高标准。
-* **单一种子、无误差棒。** DQN 与 First-Fit 的差距（占用率约 0.003–0.005）很小，
-  可能并不显著；我们没有跑多种子，因此不声称任何方向上的优势。
+* **明显胜出的只有 Worst-Fit。**
+* **单一种子。** 只跑了一个种子，因此 DQN 与 First-Fit 的小差距（占用率约
+  0.003–0.005）没有方差估计。
 
 **可能原因（按重要性从高到低）：**
 

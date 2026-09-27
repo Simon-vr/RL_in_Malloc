@@ -25,10 +25,10 @@ bytes are concentrated in a few large blocks. The rationale is that a
 concentrated free list is easier to satisfy future (including large) requests,
 so it correlates with low external fragmentation.
 
-It is important to be clear that this is a **proxy**, not the evaluation
-objective. We *evaluate* occupancy, duration and fragmentation. A policy that
-maximises a smooth concentration surrogate is not guaranteed to maximise
-occupancy, and in practice it does not (the DQN trails Best-Fit on occupancy).
+This is a **proxy** objective, not the evaluation objective. We *evaluate*
+occupancy, duration and fragmentation. A policy that maximises a smooth
+concentration surrogate is not guaranteed to maximise occupancy, and in
+practice it does not (the DQN trails Best-Fit on occupancy).
 
 ## 3. HHI: a single definition
 

@@ -5,9 +5,7 @@ Training requests are drawn i.i.d. from one of the four distributions in
 list generated from an *optimistic reference timeline*: every allocation
 succeeds, so every ``free`` event refers to an allocation ordinal that is
 guaranteed to be live on the reference path.  A real policy that fails early
-simply stops before it ever reaches the later free events, so it never has to
-resolve an absent ordinal.  This replaces the buggy legacy generator whose
-free IDs could refer to allocations that never happened.
+simply stops before it ever reaches the later free events.
 """
 
 from __future__ import annotations

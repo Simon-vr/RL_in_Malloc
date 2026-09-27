@@ -98,7 +98,7 @@ micromamba run -n test-py312 python -m rlmalloc.evaluate \
 | Markdown table | `results/tables/summary.md` |
 | Figures | `results/figures/fig3_*`, `fig4_*`, `fig5_*` |
 | Checkpoints | `results/checkpoints/agent.pt`, `agent_target.pt`, `agent_meta.json` |
-| Legacy output copy | `results/original/result.txt` |
+| Archived output copy | `results/original/result.txt` |
 
 ## 6. Shell wrappers
 

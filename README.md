@@ -7,13 +7,8 @@ chooses which free block to allocate from, guided by a reward that encourages a
 *concentrated* free space. It is benchmarked against the classic First-Fit,
 Best-Fit and Worst-Fit policies on four request distributions.
 
-> **Honest status.** The learned policy is a **modest, partly negative**
-> result. It roughly matches First-Fit, is clearly **worse than Best-Fit** on
-> occupancy / duration / fragmentation, and only clearly beats Worst-Fit. It is
-> *not* a better allocator than Best-Fit. [Section 7](#7-honest-assessment-weaknesses-and-likely-causes)
-> states the weaknesses and the likely reasons; nothing is tuned to look
-> better. Every number and figure in this repository is produced by the code
-> in this repository.
+All numbers and figures in this repository are produced by the code in this
+repository.
 
 ## Contents
 
@@ -24,7 +19,7 @@ Best-Fit and Worst-Fit policies on four request distributions.
 5. [Install](#5-install)
 6. [Quickstart](#6-quickstart)
 7. [Reproduce the full results](#7-reproduce-the-full-results)
-8. [Honest assessment: weaknesses and likely causes](#8-honest-assessment-weaknesses-and-likely-causes)
+8. [Limitations and likely causes](#8-limitations-and-likely-causes)
 9. [Metrics (and how HHI is defined)](#9-metrics-and-how-hhi-is-defined)
 10. [Testing](#10-testing)
 11. [Documentation map](#11-documentation-map)
@@ -83,8 +78,8 @@ Per-distribution 2×2 breakdowns (occupancy / duration / fragmentation / HHI):
 
 ### 2.4 Results table
 
-Mean over 1000 evaluation rounds per distribution (no error bars — see
-[Section 8](#8-honest-assessment-weaknesses-and-likely-causes)). Raw table:
+Mean over 1000 evaluation rounds per distribution (single seed; see
+[Section 8](#8-limitations-and-likely-causes)). Raw table:
 [`results/tables/summary.md`](results/tables/summary.md).
 
 | distribution | policy | occupancy | duration | fragmentation | hhi |
@@ -138,7 +133,7 @@ RLmalloc/
 ├── LICENSE
 ├── requirements.txt  requirements-dev.txt  environment.yml
 ├── conftest.py
-├── config.py agent.py env.py utils.py main.py test.py   # legacy import shims
+├── config.py agent.py env.py utils.py main.py test.py   # compatibility shims
 ├── docs/
 │   ├── METHOD.md  METHOD.zh-CN.md
 │   ├── DESIGN.md  DESIGN.zh-CN.md
@@ -224,19 +219,17 @@ Reference timings on this machine (RTX 5060 Laptop GPU + CPU): full training
 Exact commands, outputs and artifact list:
 [`docs/REPRODUCE.md`](docs/REPRODUCE.md).
 
-## 8. Honest assessment: weaknesses and likely causes
+## 8. Limitations and likely causes
 
-The result is **weaker than hoped** and it is worth saying so plainly:
+The learned policy does not surpass Best-Fit. The main observations:
 
-* **It never beats Best-Fit.** On every distribution and every classical
-  metric (occupancy, duration, fragmentation), Best-Fit is better.
-* **It barely beats First-Fit — sometimes not at all.** On the training
-  distribution First-Fit even has slightly lower fragmentation
-  (0.6701 vs 0.6882).
-* **It only clearly beats Worst-Fit**, which is not a high bar.
-* **Single seed, no error bars.** The DQN↔First-Fit gaps (~0.003–0.005
-  occupancy) are small enough that they may not be significant; we did not run
-  multiple seeds, so we do not claim a directional advantage either way.
+* **Best-Fit is stronger on every classical metric.** Occupancy, duration and
+  fragmentation all favour Best-Fit across the four distributions.
+* **The margin over First-Fit is small.** On the training distribution
+  First-Fit even has slightly lower fragmentation (0.6701 vs 0.6882).
+* **The clear win is over Worst-Fit.**
+* **Single seed.** Only one seed was used, so the small DQN↔First-Fit gaps
+  (~0.003–0.005 occupancy) carry no variance estimate.
 
 **Likely causes (most to least important):**
 

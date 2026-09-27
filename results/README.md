@@ -25,7 +25,7 @@ micromamba run -n test-py312 python ...
 | `figures/fig5_{occupancy,duration,fragmentation,hhi}_all.{png,svg}` | Cross-distribution grouped bars for each metric. |
 | `checkpoints/agent.pt`, `agent_target.pt`, `agent_meta.json` | Full trained DQN (10 000 episodes) + target net + metadata. |
 | `checkpoints/agent_quick*.pt`, `agent_quick_meta.json` | Bounded quick-profile checkpoint. |
-| `original/result.txt` | Copy of the user's original legacy `result.txt` (preserved unchanged). |
+| `original/result.txt` | Archived copy of an earlier output (`result.txt`). |
 
 Generated `.pt` checkpoints are git-ignored (regenerable); logs, tables and
 figures are tracked.
@@ -84,7 +84,7 @@ HHI uses the unified definition `Σ(lᵢ/S)²` (higher = more concentrated).
 | bimodal | Best-Fit | 0.9176 | 55.03 | 0.3768 | 0.4921 |
 | bimodal | Worst-Fit | 0.7701 | 47.55 | 0.6734 | 0.2389 |
 
-### Reading the numbers honestly
+### Interpretation
 
 * **Occupancy / duration / fragmentation:** Best-Fit is best on all three,
   Worst-Fit is worst, and the DQN sits between them close to (very slightly

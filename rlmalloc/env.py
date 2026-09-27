@@ -120,8 +120,7 @@ class MemoryEnv:
         """Consume free events, then arm the next allocation request.
 
         Sets ``current_request_size``/``current_ordinal`` to ``None`` once the
-        event list is exhausted.  Non-recursive (fixes legacy trailing-free
-        fallthrough).
+        event list is exhausted.  Non-recursive.
         """
         self.current_request_size = None
         self.current_ordinal = None

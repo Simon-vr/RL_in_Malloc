@@ -94,7 +94,7 @@ micromamba run -n test-py312 python -m rlmalloc.evaluate \
 | Markdown 表格 | `results/tables/summary.md` |
 | 图 | `results/figures/fig3_*`, `fig4_*`, `fig5_*` |
 | 检查点 | `results/checkpoints/agent.pt`, `agent_target.pt`, `agent_meta.json` |
-| 旧输出副本 | `results/original/result.txt` |
+| 归档输出副本 | `results/original/result.txt` |
 
 ## 6. Shell 包装脚本
 

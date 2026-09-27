@@ -2,9 +2,8 @@
 
 This is the *single source of truth* for the candidate set used by both the
 state builder (:mod:`rlmalloc.env`) and the action decoder (also
-:mod:`rlmalloc.env`).  Keeping one function is what prevents the historical
-state/action mismatch bug (state listed blocks in one order while the action
-was decoded in another).
+:mod:`rlmalloc.env`).  Keeping one function guarantees that the block shown in
+the state is exactly the block an action selects.
 
 Candidate rule: sort free blocks by start address ascending and keep the first
 ``k`` whose size satisfies the current request.

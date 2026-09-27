@@ -47,10 +47,8 @@ is `request / M`. Unused candidate slots are zero-padded.
 
 Because the **same** `build_candidates` function feeds both the state encoder
 and the action decoder, the block the agent sees at slot `i` is exactly the
-block that action `i` allocates. (An earlier version sorted the two
-differently, which silently invalidated the learned policy; that is why the
-candidate builder is a single shared function and is covered by a regression
-test.)
+block that action `i` allocates. This invariant is enforced by a regression
+test.
 
 ### Action (`0 .. k−1`) — `MemoryEnv.step`
 
