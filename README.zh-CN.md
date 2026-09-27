@@ -6,8 +6,6 @@
 从少量候选空闲块中选择一个来分配，奖励函数鼓励空闲空间保持**集中**（健康）。
 项目将它与经典的 First-Fit、Best-Fit、Worst-Fit 策略在四种请求分布上对比。
 
-本仓库中的所有数字与图都来自本仓库代码的真实运行。
-
 ## 目录
 
 1. [项目是什么](#1-项目是什么)
@@ -37,8 +35,7 @@ DQN 从中选择一个。奖励是空闲空间的 *Herfindahl–Hirschman 指数
 
 ## 2. 结果速览
 
-以下所有图都由 `rlmalloc.evaluate` / `rlmalloc.plotting` 生成，位于
-[`results/figures/`](results/figures/)。
+图位于 [`results/figures/`](results/figures/)。
 
 ### 2.1 训练
 

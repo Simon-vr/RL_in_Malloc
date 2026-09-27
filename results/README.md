@@ -1,7 +1,7 @@
 # Results
 
 Catalog of every artifact under `results/`, plus the measured numbers and the
-exact commands that produced them. All Python commands run in the isolated
+exact commands to reproduce them. All Python commands run in the isolated
 environment `test-py312`:
 
 ```bash

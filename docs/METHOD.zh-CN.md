@@ -103,7 +103,7 @@ micromamba run -n test-py312 python -m rlmalloc.train \
 | `bimodal` | 70% `Lognormal(ln 16, σ=0.9)` + 30% `Lognormal(ln 256, σ=0.9)` |
 
 `generate_workload` 生成显式事件列表，基于**乐观参考时间线**：假定每次分配都
-成功，因此每个 `free` 事件引用的分配序号在参考路径上必然存活。真实策略若提前
+成功，因此每个 `free` 事件引用的分配序号在参考路径上必然存活。实际策略若提前
 失败，会在到达后续 free 事件前停下，因此永远不会遇到不存在的序号。同一轮中所有
 策略回放完全相同的事件列表。
 
